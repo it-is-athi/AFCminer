@@ -8,14 +8,15 @@ and reused for all visualization tables and mining algorithms.
 
 from collections import Counter
 from time import perf_counter
-from experiment_utils import SUBSET_SIZES
+from experiment_utils import (
+    TOP_NODE_COUNT,
+    DATASET_FILE,
+    DATASET_FOLDER,
+    SUBSET_SIZES,
+)
 from sparse_preprocess import load_facebook100_data, split_preprocessed_data
 from AFCMiner import AFCMiner
 from bk import BKMiner
-
-TOP_NODE_COUNT = 1500
-DATASET_FILE = "American75.mat"
-DATASET_FOLDER = "facebook100"
 
 DEFAULT_K = 1
 DEFAULT_DELTA = 2
