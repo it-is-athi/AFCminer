@@ -144,7 +144,7 @@ def load_facebook100_data(
         elif attribute_type == "year":
             val = int(local_info[node_idx, 5])
             if granularity == 2:
-                raw_vals[node_str] = "junior_senior" if val in [2006, 2007] else "fresh_soph"
+                raw_vals[node_str] = "senior" if val in [2006, 2007] else "junior"
             else:
                 raw_vals[node_str] = val
 
@@ -155,7 +155,7 @@ def load_facebook100_data(
             gender = "female" if local_info[node_idx, 1] == 1 else "male"
             val = int(local_info[node_idx, 5])
             if granularity == 2:
-                val = "junior_senior" if val in [2006, 2007] else "fresh_soph"
+                val = "senior" if val in [2006, 2007] else "junior"
             raw_vals[node_str] = (gender, val)
 
     if attribute_type in ["major", "dorm"]:
@@ -175,7 +175,7 @@ def load_facebook100_data(
     if attribute_type == "multidim_gender_year":
         genders = ["male", "female"]
         if granularity == 2:
-            years = ["junior_senior", "fresh_soph"]
+            years = ["senior", "junior"]
         else:
             years = [2006, 2007, 2008, 2009]
             
