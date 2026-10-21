@@ -15,7 +15,7 @@ from experiment_utils import (
     SUBSET_SIZES,
 )
 from sparse_preprocess import load_facebook100_data, split_preprocessed_data
-from AFCMiner import AFCMiner
+from fc_miner import FairCliqueMiner
 from bk import BKMiner
 
 DEFAULT_K = 1
@@ -93,29 +93,51 @@ def run_experiment_1(generated_subsets, k=DEFAULT_K, delta=DEFAULT_DELTA):
         else:
             bk_afc, bk_wfc = bk_out[0], bk_out[1]
 
-        # 2. Run AFCMiner with timing
-        print("  Running AFCMiner...", flush=True)
+        # 2. Run FairCliqueMiner with timing
+        print("  Running FairCliqueMiner...", flush=True)
         start_time = perf_counter()
-        afc_out = AFCMiner(V, node_attribute_set, R, k=k, delta=delta)
-        afcminer_time_ms = (perf_counter() - start_time) * 1000
+        fair_clique_out = FairCliqueMiner(
+            V,
+            node_attribute_set,
+            R,
+            k=k,
+            delta=delta
+        )
+        fair_clique_time_ms = (
+            perf_counter() - start_time
+        ) * 1000
 
-        afc_afc, afc_wfc, afc_afc_max, afc_wfc_max, afc_count_afc, afc_count_wfc = afc_out
+        (
+            absolute_fair_cliques,
+            weak_fair_cliques,
+            largest_absolute_fair_size,
+            largest_weak_fair_size,
+            absolute_fair_count_by_size,
+            weak_fair_count_by_size
+        ) = fair_clique_out
 
-        runtime_rows.append((index, size, bk_time_ms, afcminer_time_ms))
+        runtime_rows.append(
+            (
+                index,
+                size,
+                bk_time_ms,
+                fair_clique_time_ms
+            )
+        )
 
         wfc_result_rows.append((
             index,
-            len(afc_afc),
-            len(afc_wfc),
-            afc_afc_max,
-            afc_wfc_max
+            len(absolute_fair_cliques),
+            len(weak_fair_cliques),
+            largest_absolute_fair_size,
+            largest_weak_fair_size
         ))
 
         size_breakdown_data.append((
             index,
             size,
-            afc_count_afc,
-            afc_count_wfc
+            absolute_fair_count_by_size,
+            weak_fair_count_by_size
         ))
 
     # --- TABLE V: RUNNING TIME COMPARISON (ms) ---

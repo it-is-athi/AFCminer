@@ -37,15 +37,14 @@ def AttributedConceptsDerivation(X):
         res+=temp
     return res
 #the paramter node_attribute_set is node union attribute set mentioned in the paper
-def AFCMiner(V,node_attribute_set,R,k=1,delta=1):
-    #res is the variable that stores all the absolute fair clique
-    AFC_res=[]
-    WFC_res=[]
-    AFC_maxi=0
-    WFC_maxi=0
+def FairCliqueMiner(V, node_attribute_set, R, k=1, delta=1):
+    absolute_fair_cliques = []
+    weak_fair_cliques = []
+    largest_absolute_fair_size = 0
+    largest_weak_fair_size = 0
     attributes=set(node_attribute_set)-set(V)
-    Count_AFC=defaultdict(int)
-    Count_WFC=defaultdict(int)
+    absolute_fair_count_by_size = defaultdict(int)
+    weak_fair_count_by_size = defaultdict(int)
     #creating the incidence matrix
     Matrix=defaultdict(lambda:defaultdict(int))
     #creating self loop
@@ -59,9 +58,12 @@ def AFCMiner(V,node_attribute_set,R,k=1,delta=1):
     for X1,X2,B in concepts:
         if X1==X2:
             if FairnessFilter(X1,X2,attributes,Matrix):
-                AFC_res.append(X1)
-                Count_AFC[len(X1)]+=1
-                AFC_maxi=max(len(X1),AFC_maxi)
+                absolute_fair_cliques.append(X1)
+                absolute_fair_count_by_size[len(X1)] += 1
+                largest_absolute_fair_size = max(
+                    len(X1),
+                    largest_absolute_fair_size
+                )
             else:
                 powerset=AttributedConceptsDerivation(X1)
                 #the powerset is sorted to avoid non maximal subclique 
@@ -82,14 +84,20 @@ def AFCMiner(V,node_attribute_set,R,k=1,delta=1):
                     if flag:continue
                     if FairnessFilter(sub,sub,attributes,Matrix):
                         cur_maxi.append(sub)
-                        AFC_res.append(sub)
-                        Count_AFC[len(sub)]+=1
-                        AFC_maxi=max(len(sub),AFC_maxi)
+                        absolute_fair_cliques.append(sub)
+                        absolute_fair_count_by_size[len(sub)] += 1
+                        largest_absolute_fair_size = max(
+                            len(sub),
+                            largest_absolute_fair_size
+                        )
             
             if WFC_FairnessFilter(X1, attributes, Matrix, k=k, delta=delta):
-                WFC_res.append(X1)
-                Count_WFC[len(X1)]+=1
-                WFC_maxi=max(len(X1),WFC_maxi)
+                weak_fair_cliques.append(X1)
+                weak_fair_count_by_size[len(X1)] += 1
+                largest_weak_fair_size = max(
+                    len(X1),
+                    largest_weak_fair_size
+                )
             else:
                 powerset = AttributedConceptsDerivation(X1) if 'powerset' not in locals() else powerset
                 powerset.sort(key=lambda x: len(x), reverse=True)
@@ -105,11 +113,27 @@ def AFCMiner(V,node_attribute_set,R,k=1,delta=1):
                     if flag:continue
                     if WFC_FairnessFilter(sub, attributes, Matrix, k=k, delta=delta):
                         cur_maxi.append(sub)
-                        WFC_res.append(sub)
-                        Count_WFC[len(sub)]+=1
-                        WFC_maxi=max(len(sub),WFC_maxi)
+                        weak_fair_cliques.append(sub)
+                        weak_fair_count_by_size[len(sub)] += 1
+                        largest_weak_fair_size = max(
+                            len(sub),
+                            largest_weak_fair_size
+                        )
 
-    print(len(AFC_res),len(WFC_res))
-    print(AFC_maxi,WFC_maxi)
+    print(
+        len(absolute_fair_cliques),
+        len(weak_fair_cliques)
+    )
+    print(
+        largest_absolute_fair_size,
+        largest_weak_fair_size
+    )
 
-    return AFC_res,WFC_res,AFC_maxi,WFC_maxi,Count_AFC,Count_WFC
+    return (
+        absolute_fair_cliques,
+        weak_fair_cliques,
+        largest_absolute_fair_size,
+        largest_weak_fair_size,
+        absolute_fair_count_by_size,
+        weak_fair_count_by_size
+    )

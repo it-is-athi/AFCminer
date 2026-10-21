@@ -1,5 +1,9 @@
 from collections import defaultdict
-from AFCMiner import FairnessFilter, AttributedConceptsDerivation,WFC_FairnessFilter
+from fc_miner import (
+    FairnessFilter,
+    AttributedConceptsDerivation,
+    WFC_FairnessFilter,
+)
 
 def BronKerboschIterative(V_set, adj):
     maximal_cliques = []

@@ -120,10 +120,6 @@ def load_facebook100_data(
     nodes = [f"v{i}" for i in subG.nodes()]
     edges = [(f"v{u}", f"v{v}") for u, v in subG.edges()]
 
-    # Debug printer to check table statistics
-    deg_vals = [d for n, d in subG.degree()]
-    print(f"[SubSet {max_nodes} Nodes] Edges: {subG.number_of_edges()} | d_avg: {np.mean(deg_vals):.2f} | d_max: {max(deg_vals)}")
-
     # 3. Attributes Processing
     raw_vals = {}
     for node_idx in subG.nodes():

@@ -11,11 +11,15 @@ if BASE_DIR not in sys.path:
 
 from experiment_utils import SUBSET_SIZES, DATASET_FILE, DATASET_FOLDER
 from sparse_preprocess import load_facebook100_data, split_preprocessed_data
-from AFCMiner import AFCMiner
+from fc_miner import FairCliqueMiner
 
 from collections import defaultdict
 from FCA import ConceptBuilder
-from AFCMiner import FairnessFilter, WFC_FairnessFilter, AttributedConceptsDerivation
+from fc_miner import (
+    FairnessFilter,
+    WFC_FairnessFilter,
+    AttributedConceptsDerivation,
+)
 
 def extract_maximal_clique_derivations(V, node_attribute_set, R, k=1, delta=10):
     attributes = set(node_attribute_set) - set(V)
@@ -286,4 +290,3 @@ if __name__ == "__main__":
         build_visualization_payload(attribute_type="gender", output_prefix="network_data1", delta=2)
     else:
         build_visualization_payload(attribute_type="multidim_gender_year", output_prefix="network_data", delta=2)
-
